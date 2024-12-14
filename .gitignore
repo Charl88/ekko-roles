@@ -1,0 +1,7 @@
+.idea
+.next
+ekko-roles.iml
+coverage
+node_modules
+dist
+build
