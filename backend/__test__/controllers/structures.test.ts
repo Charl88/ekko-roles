@@ -2,7 +2,6 @@ import { AppDataSource } from '../../src/dataSource'
 import { server } from '../../src'
 import { Structure } from '../../src/entities/structure'
 import request from 'supertest'
-import { response } from 'express'
 
 beforeAll(async () => {
     await AppDataSource.initialize()

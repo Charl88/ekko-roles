@@ -1,5 +1,6 @@
 .idea
 .next
+.env
 ekko-roles.iml
 coverage
 node_modules

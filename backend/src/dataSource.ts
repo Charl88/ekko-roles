@@ -16,10 +16,14 @@ export const AppDataSource = new DataSource({
     password: DB_PASSWORD || '',
     database:
         process.env.NODE_ENV === 'test' ? 'test_db' : DB_NAME || 'ekko_roles',
-    synchronize: false, // set to false in production, and use migrations instead
+    synchronize: false,
     logging: true,
     entities: [User, Role, Structure],
-    migrations: ['./src/migrations/*.ts'],
+    migrations: [
+        process.env.NODE_ENV === 'prod'
+            ? './dist/migrations/*.js'
+            : './src/migrations/*.ts',
+    ],
     migrationsTableName:
         process.env.NODE_ENV === 'test' ? 'migrations_test' : 'migrations',
 })

@@ -8,6 +8,7 @@ export const accessControl = async (
     req: Request,
     res: Response,
     next: NextFunction
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
     try {
         const userId = req.headers['user-id'] as string // Simulate authenticated user
@@ -26,6 +27,7 @@ export const accessControl = async (
                 .json({ code: 500, message: 'Internal Server Error' })
         res.locals.user = user
     } catch (error) {
+        console.error(error)
         return res
             .status(500)
             .json({ code: 500, message: 'Internal Server Error' })
@@ -37,6 +39,7 @@ export const canCreate = async (
     req: Request,
     res: Response,
     next: NextFunction
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
     try {
         const user = res.locals.user
@@ -73,6 +76,7 @@ export const canCreate = async (
             return res.status(403).json({ code: 403, message: 'Forbidden' })
         }
     } catch (error) {
+        console.error(error)
         return res
             .status(500)
             .json({ code: 500, message: 'Internal Server Error' })
@@ -84,6 +88,7 @@ export const canEdit = async (
     req: Request,
     res: Response,
     next: NextFunction
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
     try {
         const user = res.locals.user
@@ -130,6 +135,7 @@ export const canEdit = async (
             return res.status(403).json({ code: 403, message: 'Forbidden' })
         }
     } catch (error) {
+        console.error(error)
         return res
             .status(500)
             .json({ code: 500, message: 'Internal Server Error' })

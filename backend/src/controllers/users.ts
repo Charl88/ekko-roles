@@ -73,9 +73,11 @@ export const createUser = async (req: Request, res: Response) => {
         })
         await AppDataSource.getRepository(User).save(newUser)
         res.status(201).json(newUser)
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error creating user:', error)
-        if (error.detail?.includes('is not present in table "roles"')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (error?.detail?.includes('is not present in table "roles"')) {
             res.status(404).json({ code: 404, message: 'Role not found' })
             return
         }

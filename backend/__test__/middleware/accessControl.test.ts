@@ -69,6 +69,7 @@ describe('accessControl Middleware', () => {
                 AppDataSource.getRepository(User),
                 'findOne'
             ).mockRejectedValue(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 new Error('Unexpected error')
             )
@@ -78,7 +79,7 @@ describe('accessControl Middleware', () => {
                 code: 500,
                 message: 'Internal Server Error',
             })
-            expect(next).not.toHaveBeenCalled
+            expect(next).not.toHaveBeenCalled()
         })
     })
 
@@ -132,6 +133,7 @@ describe('accessControl Middleware', () => {
         it('should handle an unexpected error', async () => {
             req.body = { structureIds: [2] }
             jest.spyOn(AppDataSource, 'getTreeRepository').mockRejectedValue(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 new Error('Unexpected error')
             )
@@ -141,7 +143,7 @@ describe('accessControl Middleware', () => {
                 code: 500,
                 message: 'Internal Server Error',
             })
-            expect(next).not.toHaveBeenCalled
+            expect(next).not.toHaveBeenCalled()
         })
     })
 
@@ -195,6 +197,7 @@ describe('accessControl Middleware', () => {
         it('should handle an unexpected error', async () => {
             req.params = { id: '2' }
             jest.spyOn(AppDataSource, 'getTreeRepository').mockRejectedValue(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 new Error('Unexpected error')
             )
