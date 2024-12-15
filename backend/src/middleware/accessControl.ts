@@ -19,12 +19,16 @@ export const accessControl = async (
             relations: ['role', 'structures'],
         })
         if (!user)
+            // We return 500 here to prevent someone spoofing auth headers to
+            // find data about existing users
             return res
                 .status(500)
                 .json({ code: 500, message: 'Internal Server Error' })
         res.locals.user = user
     } catch (error) {
-        next(error)
+        return res
+            .status(500)
+            .json({ code: 500, message: 'Internal Server Error' })
     }
     next()
 }
@@ -69,7 +73,9 @@ export const canCreate = async (
             return res.status(403).json({ code: 403, message: 'Forbidden' })
         }
     } catch (error) {
-        next(error)
+        return res
+            .status(500)
+            .json({ code: 500, message: 'Internal Server Error' })
     }
     next()
 }
@@ -83,7 +89,7 @@ export const canEdit = async (
         const user = res.locals.user
         const targetUserId = parseInt(req.params.id)
 
-        // Only managers can create users
+        // Only managers can edit users
         if (user.role.id !== 1) {
             return res.status(403).json({ code: 403, message: 'Forbidden' })
         }
@@ -98,6 +104,8 @@ export const canEdit = async (
                 .status(404)
                 .json({ code: 404, message: 'User not found' })
         }
+
+        res.locals.targetUser = targetUser
 
         const allDescendants = new Set<Structure>()
         for (const structure of user.structures) {
@@ -122,7 +130,9 @@ export const canEdit = async (
             return res.status(403).json({ code: 403, message: 'Forbidden' })
         }
     } catch (error) {
-        next(error)
+        return res
+            .status(500)
+            .json({ code: 500, message: 'Internal Server Error' })
     }
     next()
 }

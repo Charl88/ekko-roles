@@ -52,6 +52,7 @@ export const createUser = async (req: Request, res: Response) => {
             message: 'Validation failed',
             errors,
         })
+        return
     }
 
     const { name, roleId, structureIds } = createUserDto
@@ -60,6 +61,11 @@ export const createUser = async (req: Request, res: Response) => {
         const structures = await AppDataSource.getRepository(Structure).find({
             where: { id: In(structureIds) },
         })
+        // if structures is an empty array, it means the structures weren't found
+        if (structures.length === 0) {
+            res.status(404).json({ code: 404, message: 'Structure not found' })
+            return
+        }
         const newUser = AppDataSource.getRepository(User).create({
             name,
             role: { id: roleId },
@@ -67,15 +73,17 @@ export const createUser = async (req: Request, res: Response) => {
         })
         await AppDataSource.getRepository(User).save(newUser)
         res.status(201).json(newUser)
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error creating user:', error)
+        if (error.detail?.includes('is not present in table "roles"')) {
+            res.status(404).json({ code: 404, message: 'Role not found' })
+            return
+        }
         res.status(500).json({ code: 500, message: 'Internal Server Error' })
     }
 }
 
 export const updateUser = async (req: Request, res: Response) => {
-    const { id } = req.params
-
     const updateUserDto = plainToInstance(UpdateUserDto, req.body)
     const errors = await validate(updateUserDto)
 
@@ -85,22 +93,22 @@ export const updateUser = async (req: Request, res: Response) => {
             message: 'Validation failed',
             errors,
         })
+        return
     }
 
     const { name, roleId, structureIds } = updateUserDto
 
     try {
-        const userToUpdate = await AppDataSource.getRepository(User).findOne({
-            where: { id: parseInt(id) },
-        })
-        if (!userToUpdate) {
-            res.status(404).json({ code: 404, message: 'User not found' })
-            return
-        }
+        const userToUpdate = res.locals.targetUser
 
         const structures = await AppDataSource.getRepository(Structure).find({
             where: { id: In(structureIds) },
         })
+        // if structures is an empty array, it means no structures were found
+        if (structures.length === 0) {
+            res.status(404).json({ code: 404, message: 'Structure not found' })
+            return
+        }
         const role = await AppDataSource.getRepository(Role).findOne({
             where: { id: roleId },
         })
@@ -121,16 +129,8 @@ export const updateUser = async (req: Request, res: Response) => {
 }
 
 export const deleteUser = async (req: Request, res: Response) => {
-    const { id } = req.params
-
     try {
-        const userToDelete = await AppDataSource.getRepository(User).findOne({
-            where: { id: parseInt(id) },
-        })
-        if (!userToDelete) {
-            res.status(404).json({ code: 404, message: 'User not found' })
-            return
-        }
+        const userToDelete = res.locals.targetUser
 
         await AppDataSource.getRepository(User).remove([userToDelete])
         res.status(200).json({

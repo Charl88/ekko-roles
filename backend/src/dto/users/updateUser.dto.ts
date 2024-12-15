@@ -1,10 +1,12 @@
-import { IsString, IsNumber, IsArray, IsNotEmpty, IsIn } from 'class-validator'
+import { IsString, IsNumber, IsArray, IsNotEmpty } from 'class-validator'
 
 export class UpdateUserDto {
     @IsString()
+    @IsNotEmpty()
     name: string
 
     @IsNumber()
+    @IsNotEmpty()
     roleId: number
 
     @IsArray()

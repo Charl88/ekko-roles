@@ -96,6 +96,14 @@ export class Seed1734188066151 implements MigrationInterface {
             })
         )
 
+        await queryRunner.manager.save(
+            queryRunner.manager.create(User, {
+                name: 'Zahir',
+                role: employee,
+                structures: [city2],
+            })
+        )
+
         const suburb3 = await queryRunner.manager.save(
             queryRunner.manager.create(Structure, {
                 name: 'Sandton',
